@@ -6,6 +6,7 @@ struct Rectangle
 {
     sf::Vector2f coordinates[4];
     sf::Vector2f rotation_centre;
+    float current_angle = 0;
 
     Rectangle() = default;
     Rectangle(sf::Vector2f coordinates_[4], sf::Vector2f rotation_centre_)
@@ -14,6 +15,7 @@ struct Rectangle
 
     void rotate(float angle) // Rotates rectangle around the centre point rotation_centre by angle in radians
     {
+        current_angle += angle;
         float cos_angle = cos(angle);
         float sin_angle = sin(angle);
 
@@ -25,11 +27,29 @@ struct Rectangle
         }
     }
 
+    void move(sf::Vector2f direction)
+    {
+        rotation_centre += direction;
+        // for (sf::Vector2f &coord : coordinates)
+        // {
+        //     coord += direction;
+        // }
+    }
+
     void print()
     {
         for (auto coord : coordinates)
         {
             std::cout << coord.x << ", " << coord.y << std::endl;
         }
+    }
+
+    void draw(sf::RenderTarget &target, sf::RectangleShape rectangle)
+    {
+        sf::Angle angle = sf::radians(current_angle);
+        rectangle.setPosition(rotation_centre);
+        rectangle.setRotation(angle);
+        rectangle.setOutlineColor(sf::Color::Black);
+        target.draw(rectangle);
     }
 };
